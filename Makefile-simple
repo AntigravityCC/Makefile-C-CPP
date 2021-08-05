@@ -1,0 +1,28 @@
+TARGET = exe
+
+#ARCH  := arm 
+CROSS_COMPILE := arm-linux-gnueabihf-
+#CC = $(CROSS_COMPILE)gcc
+CC = gcc
+
+objects := main.o  example.o
+
+
+$(TARGET): $(objects)
+	$(CC) -o $(TARGET) $(objects) -lpthread
+	@echo "> build success <"
+
+dep_files := $(foreach f, $(objects), .$(f).d)
+dep_files := $(wildcard $(dep_files))
+
+ifneq ($(dep_files),)
+include $(dep_files)
+endif
+
+%.o : %.c
+	$(CC) -Wp,-MD,.$@.d -c -o $@ $<
+
+clean:
+	rm *.o $(dep_files) *.o $(TARGET) -f
+	
+
